@@ -1,0 +1,58 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "DM Sans", system-ui, sans-serif;
+  --font-display: "Space Grotesk", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  --color-background: oklch(7% 0.02 264);
+  --color-foreground: oklch(95% 0.01 240);
+  --color-card: oklch(12% 0.03 264);
+  --color-card-foreground: oklch(95% 0.01 240);
+  --color-primary: oklch(55% 0.18 264);
+  --color-primary-foreground: oklch(98% 0.005 240);
+  --color-secondary: oklch(18% 0.04 264);
+  --color-secondary-foreground: oklch(95% 0.01 240);
+  --color-muted: oklch(18% 0.04 264);
+  --color-muted-foreground: oklch(68% 0.04 256);
+  --color-accent: oklch(65% 0.16 264);
+  --color-accent-foreground: oklch(8% 0.02 264);
+  --color-border: oklch(22% 0.04 264);
+  --color-input: oklch(20% 0.04 264);
+  --color-ring: oklch(55% 0.18 264);
+  --color-glow: oklch(60% 0.2 264);
+
+  --radius-lg: 0.75rem;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+  }
+}
+
+@layer utilities {
+  .glow-text {
+    text-shadow: 0 0 40px var(--color-glow);
+  }
+
+  .bg-grid {
+    background-image:
+      linear-gradient(to right, oklch(22% 0.04 264 / 40%) 1px, transparent 1px),
+      linear-gradient(to bottom, oklch(22% 0.04 264 / 40%) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+}
