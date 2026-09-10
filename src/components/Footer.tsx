@@ -9,6 +9,27 @@ export default function Footer() {
         <p>
           © {year} {profile.name}. Built with React &amp; Tailwind.
         </p>
+        <p className="text-xs">
+          Betta fish model &ldquo;Sculptural Betta Fish Figurine&rdquo; by Haggiwatt, via{" "}
+          <a
+            href="https://www.printables.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline hover:text-foreground"
+          >
+            Printables
+          </a>
+          , licensed{" "}
+          <a
+            href="https://creativecommons.org/licenses/by-nc-sa/4.0/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline hover:text-foreground"
+          >
+            CC BY-NC-SA 4.0
+          </a>
+          .
+        </p>
       </div>
     </footer>
   );
