@@ -1,4 +1,4 @@
-import CircuitBackground from "./components/CircuitBackground";
+import AquariumBackground from "./components/AquariumBackground";
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import About from "./components/About";
@@ -12,7 +12,7 @@ import Footer from "./components/Footer";
 function App() {
   return (
     <>
-      <CircuitBackground />
+      <AquariumBackground />
       <div className="relative z-10">
         <Navbar />
         <main>
