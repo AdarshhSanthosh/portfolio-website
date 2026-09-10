@@ -62,6 +62,12 @@ function addFinRipple(model: THREE.Object3D): { value: number }[] {
     const center = bbox.getCenter(new THREE.Vector3());
     const size = bbox.getSize(new THREE.Vector3());
     const maxDim = Math.max(size.x, size.y, size.z) || 1;
+    // The snout tip is itself a sharp extremity, same as a fin tip, so the
+    // center-distance falloff alone catches it too. It sits at the mesh's
+    // min-X corner (found via loadBettaModel's rotation: a 180deg Y-flip
+    // puts the nose at +X in world space, so pre-flip it's at -X/min.x).
+    // Carve out a small no-motion zone anchored there as well.
+    const noseAnchor = new THREE.Vector3(bbox.min.x, center.y, center.z);
 
     const materials = Array.isArray(obj.material) ? obj.material : [obj.material];
     materials.forEach((mat) => {
@@ -71,10 +77,13 @@ function addFinRipple(model: THREE.Object3D): { value: number }[] {
       mat.onBeforeCompile = (shader: THREE.WebGLProgramParametersWithUniforms) => {
         shader.uniforms.uTime = uTime;
         shader.uniforms.uCenter = { value: center.clone() };
-        shader.uniforms.uInner = { value: maxDim * 0.30 };
+        shader.uniforms.uInner = { value: maxDim * 0.3 };
         shader.uniforms.uOuter = { value: maxDim * 0.68 };
         shader.uniforms.uAmp = { value: maxDim * 0.06 };
         shader.uniforms.uFreq = { value: 5.5 / maxDim };
+        shader.uniforms.uNoseAnchor = { value: noseAnchor.clone() };
+        shader.uniforms.uNoseInner = { value: maxDim * 0.08 };
+        shader.uniforms.uNoseOuter = { value: maxDim * 0.26 };
 
         shader.vertexShader = shader.vertexShader
           .replace(
@@ -85,7 +94,10 @@ function addFinRipple(model: THREE.Object3D): { value: number }[] {
             uniform float uInner;
             uniform float uOuter;
             uniform float uAmp;
-            uniform float uFreq;`,
+            uniform float uFreq;
+            uniform vec3 uNoseAnchor;
+            uniform float uNoseInner;
+            uniform float uNoseOuter;`,
           )
           .replace(
             "#include <begin_vertex>",
@@ -94,6 +106,8 @@ function addFinRipple(model: THREE.Object3D): { value: number }[] {
               vec3 rel = position - uCenter;
               float dist = length(rel);
               float weight = smoothstep(uInner, uOuter, dist);
+              float noseDist = length(position - uNoseAnchor);
+              weight *= smoothstep(uNoseInner, uNoseOuter, noseDist);
               vec3 dir = dist > 0.0001 ? normalize(rel) : vec3(0.0, 0.0, 1.0);
               float wave = sin(uTime * 2.0 + rel.y * uFreq * 6.2831853)
                 + 0.35 * sin(uTime * 3.4 - rel.x * uFreq * 4.0);
