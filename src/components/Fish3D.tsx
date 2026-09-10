@@ -71,8 +71,8 @@ function addFinRipple(model: THREE.Object3D): { value: number }[] {
       mat.onBeforeCompile = (shader: THREE.WebGLProgramParametersWithUniforms) => {
         shader.uniforms.uTime = uTime;
         shader.uniforms.uCenter = { value: center.clone() };
-        shader.uniforms.uInner = { value: maxDim * 0.14 };
-        shader.uniforms.uOuter = { value: maxDim * 0.55 };
+        shader.uniforms.uInner = { value: maxDim * 0.30 };
+        shader.uniforms.uOuter = { value: maxDim * 0.68 };
         shader.uniforms.uAmp = { value: maxDim * 0.06 };
         shader.uniforms.uFreq = { value: 5.5 / maxDim };
 
