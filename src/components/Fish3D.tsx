@@ -45,6 +45,69 @@ function buildFallbackFish(): THREE.Group {
 
 const easeInOut = (t: number) => t * t * (3 - 2 * t);
 
+// The betta model is a single static sculpt (no rig/bones), so the fins
+// can't be posed frame-to-frame. Instead this gives every material a
+// vertex-shader ripple: displacement grows with distance from the mesh's
+// own center, so the compact body stays rigid while the flowing fin tips
+// sway - a cheap stand-in for real fin motion. Returns the per-material
+// time uniforms so the caller can drive them each frame.
+function addFinRipple(model: THREE.Object3D): { value: number }[] {
+  const timeUniforms: { value: number }[] = [];
+
+  model.traverse((obj) => {
+    if (!(obj instanceof THREE.Mesh)) return;
+    obj.geometry.computeBoundingBox();
+    const bbox = obj.geometry.boundingBox;
+    if (!bbox) return;
+    const center = bbox.getCenter(new THREE.Vector3());
+    const size = bbox.getSize(new THREE.Vector3());
+    const maxDim = Math.max(size.x, size.y, size.z) || 1;
+
+    const materials = Array.isArray(obj.material) ? obj.material : [obj.material];
+    materials.forEach((mat) => {
+      const uTime = { value: 0 };
+      timeUniforms.push(uTime);
+
+      mat.onBeforeCompile = (shader: THREE.WebGLProgramParametersWithUniforms) => {
+        shader.uniforms.uTime = uTime;
+        shader.uniforms.uCenter = { value: center.clone() };
+        shader.uniforms.uInner = { value: maxDim * 0.14 };
+        shader.uniforms.uOuter = { value: maxDim * 0.55 };
+        shader.uniforms.uAmp = { value: maxDim * 0.06 };
+        shader.uniforms.uFreq = { value: 5.5 / maxDim };
+
+        shader.vertexShader = shader.vertexShader
+          .replace(
+            "#include <common>",
+            `#include <common>
+            uniform float uTime;
+            uniform vec3 uCenter;
+            uniform float uInner;
+            uniform float uOuter;
+            uniform float uAmp;
+            uniform float uFreq;`,
+          )
+          .replace(
+            "#include <begin_vertex>",
+            `#include <begin_vertex>
+            {
+              vec3 rel = position - uCenter;
+              float dist = length(rel);
+              float weight = smoothstep(uInner, uOuter, dist);
+              vec3 dir = dist > 0.0001 ? normalize(rel) : vec3(0.0, 0.0, 1.0);
+              float wave = sin(uTime * 2.0 + rel.y * uFreq * 6.2831853)
+                + 0.35 * sin(uTime * 3.4 - rel.x * uFreq * 4.0);
+              transformed += dir * wave * uAmp * weight;
+            }`,
+          );
+      };
+      mat.needsUpdate = true;
+    });
+  });
+
+  return timeUniforms;
+}
+
 export default function Fish3D() {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -97,10 +160,14 @@ export default function Fish3D() {
     scene.add(fish);
 
     let disposeModel: (() => void) | null = null;
+    let finTimeUniforms: { value: number }[] = [];
     loadBettaModel()
       .then((model) => {
         if (cancelled) return;
         fish.add(model);
+        if (!reduceMotion) {
+          finTimeUniforms = addFinRipple(model);
+        }
         disposeModel = () => {
           model.traverse((obj) => {
             if (obj instanceof THREE.Mesh) {
@@ -182,6 +249,8 @@ export default function Fish3D() {
         const bob = Math.sin(t * 0.9) * 0.45 + Math.sin(t * 1.7) * 0.12;
         fish.position.y = bob + 1.2 + scrollOffsetWorld;
         fish.rotation.z = Math.sin(t * 0.9) * 0.05 * (goingRight ? 1 : -1);
+
+        for (const u of finTimeUniforms) u.value = t;
 
         renderer.render(scene, camera);
       };
