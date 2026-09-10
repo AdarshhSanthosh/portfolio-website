@@ -43,6 +43,8 @@ function buildFallbackFish(): THREE.Group {
   return fish;
 }
 
+const easeInOut = (t: number) => t * t * (3 - 2 * t);
+
 // The betta model is a single static sculpt (no rig/bones), so the fins
 // can't be posed frame-to-frame. Instead this gives every material a
 // vertex-shader ripple: displacement grows with distance from the mesh's
@@ -223,16 +225,34 @@ export default function Fish3D() {
       rafId = staticRaf;
     } else {
       window.addEventListener("scroll", onScroll, { passive: true });
-      // The fish stays put (still following scroll) - only the fins/tail
-      // move, via the shader ripple. No swim-across-screen, no bobbing.
-      fish.position.x = -1;
+      const cycle = 38;
+      const xLeft = -7.2;
+      const xRight = 6.8;
 
       const tick = (now: number) => {
         rafId = requestAnimationFrame(tick);
         const t = (now - start) / 1000;
+        const phase = (t % cycle) / cycle;
+        const goingRight = phase < 0.5;
+        const local = goingRight ? phase / 0.5 : (phase - 0.5) / 0.5;
+        const eased = easeInOut(local);
 
-        fish.position.y = 1.2 + scrollOffsetWorld;
+        // Whole-body motion: swim across the screen and bob gently.
+        fish.position.x = goingRight
+          ? THREE.MathUtils.lerp(xLeft, xRight, eased)
+          : THREE.MathUtils.lerp(xRight, xLeft, eased);
+        // Keep the model's one good viewing angle fixed and mirror it
+        // for direction changes instead of rotating (rotating would
+        // sweep through much less flattering angles) - the same trick
+        // as flipping a 2D sprite.
+        fish.scale.x = goingRight ? 1 : -1;
 
+        const bob = Math.sin(t * 0.9) * 0.45 + Math.sin(t * 1.7) * 0.12;
+        fish.position.y = bob + 1.2 + scrollOffsetWorld;
+        fish.rotation.z = Math.sin(t * 0.9) * 0.05 * (goingRight ? 1 : -1);
+
+        // Fin/tail motion: the shader ripple, weighted by distance from
+        // the mesh's own center so only the fins/tail actually move.
         for (const u of finTimeUniforms) u.value = t;
 
         renderer.render(scene, camera);
