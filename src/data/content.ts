@@ -1,5 +1,6 @@
-import shopifyImg from "../assets/project-shopify.webp";
-import chatbotImg from "../assets/project-chatbot.webp";
+import dekentoImg from "../assets/project-dekento.webp";
+import runrinseImg from "../assets/project-runrinse.webp";
+import hikekickImg from "../assets/project-hikekick.webp";
 
 export const profile = {
   name: "Adarsh Santhosh",
@@ -134,18 +135,25 @@ export const personalProjects: Project[] = [];
 // Client/freelance engagements.
 export const freelanceProjects: Project[] = [
   {
-    image: shopifyImg,
-    name: "Shopify E-commerce Storefront",
+    image: dekentoImg,
+    name: "DeKento",
     description:
-      "Custom Shopify storefront development and theme customization, including feature integrations and checkout improvements for real-world e-commerce clients.",
-    url: "#",
+      "A concierge web app for travelers arriving in Lagos: enter your trip details, get recommended arrival services (airport pickup, apartment prep, welcome food), book and pay, while the concierge team coordinates fulfillment and tracks status in an admin dashboard.",
+    url: "https://dekento.netlify.app/",
   },
   {
-    image: chatbotImg,
-    name: "AI Document Chatbot",
+    image: runrinseImg,
+    name: "RunRinse",
     description:
-      "A RAG-powered chatbot that lets users query documents in natural language, combining vector embeddings with an LLM to return grounded, context-aware answers.",
-    url: "#",
+      "A Shopify e-commerce storefront for a face wash brand built for athletes, with product storytelling, a starter-kit checkout flow, and theme customization tailored to the brand.",
+    url: "https://runrinse.com/",
+  },
+  {
+    image: hikekickImg,
+    name: "HikeKick",
+    description:
+      "A Shopify e-commerce store for an outdoor apparel brand, where I contributed finishing and refinement work through custom Liquid theme coding.",
+    url: "https://hikekick.com/",
   },
 ];
 
