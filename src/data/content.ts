@@ -1,3 +1,4 @@
+import interviewiqImg from "../assets/project-interviewiq.webp";
 import dekentoImg from "../assets/project-dekento.webp";
 import runrinseImg from "../assets/project-runrinse.webp";
 import hikekickImg from "../assets/project-hikekick.webp";
@@ -130,7 +131,15 @@ export type Project = {
 };
 
 // Your own projects, built outside of client work.
-export const personalProjects: Project[] = [];
+export const personalProjects: Project[] = [
+  {
+    image: interviewiqImg,
+    name: "InterviewIQ",
+    description:
+      "An AI interview prep app: upload a resume and target role to get personalized interview questions with model answers, company research, and a live conversational AI interview with a scored feedback report — powered by the Gemini API.",
+    url: "https://interview-preparation-ai-webapp.vercel.app/",
+  },
+];
 
 // Client/freelance engagements.
 export const freelanceProjects: Project[] = [
