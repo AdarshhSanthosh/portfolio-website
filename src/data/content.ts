@@ -1,3 +1,6 @@
+import shopifyImg from "../assets/project-shopify.webp";
+import chatbotImg from "../assets/project-chatbot.webp";
+
 export const profile = {
   name: "Adarsh Santhosh",
   logoLabel: "Adarsh.Dev",
@@ -115,24 +118,36 @@ export const skillCategories = [
   },
 ];
 
-export const projects = [
+export type Project = {
+  /** Image URL - an imported local asset (resolves to a URL at build time)
+   * or a plain https:// URL both work here. */
+  image: string;
+  name: string;
+  description: string;
+  /** Where the "View" button links to. */
+  url: string;
+};
+
+// Your own projects, built outside of client work.
+export const personalProjects: Project[] = [];
+
+// Client/freelance engagements.
+export const freelanceProjects: Project[] = [
   {
-    image: "shopify",
-    category: "E-commerce",
+    image: shopifyImg,
     name: "Shopify E-commerce Storefront",
     description:
       "Custom Shopify storefront development and theme customization, including feature integrations and checkout improvements for real-world e-commerce clients.",
-    tech: ["Shopify", "Liquid", "JavaScript", "E-commerce integrations"],
+    url: "#",
   },
   {
-    image: "chatbot",
-    category: "AI / Chatbot",
+    image: chatbotImg,
     name: "AI Document Chatbot",
     description:
       "A RAG-powered chatbot that lets users query documents in natural language, combining vector embeddings with an LLM to return grounded, context-aware answers.",
-    tech: ["Python", "RAG", "Vector Search", "LLM"],
+    url: "#",
   },
-] as const;
+];
 
 export const contact = {
   headline: "Let's build something great.",
