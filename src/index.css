@@ -56,3 +56,33 @@
     background-size: 48px 48px;
   }
 }
+
+/* Aquarium background: rising bubbles (the fish is a Three.js 3D model,
+   animated in JS - see Fish3D.tsx) */
+@keyframes aquarium-rise {
+  0% {
+    transform: translateY(0) translateX(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.55;
+  }
+  90% {
+    opacity: 0.35;
+  }
+  100% {
+    transform: translateY(-105vh) translateX(18px);
+    opacity: 0;
+  }
+}
+
+.aquarium-bubble {
+  position: absolute;
+  bottom: -5%;
+  border-radius: 9999px;
+  background: radial-gradient(circle at 35% 30%, oklch(95% 0.02 220 / 70%), oklch(80% 0.08 220 / 15%));
+  border: 1px solid oklch(95% 0.02 220 / 30%);
+  animation-name: aquarium-rise;
+  animation-timing-function: ease-in;
+  animation-iteration-count: infinite;
+}
