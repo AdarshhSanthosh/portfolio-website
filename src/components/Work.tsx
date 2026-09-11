@@ -33,15 +33,15 @@ function ProjectCard({ project }: { project: Project }) {
   );
 }
 
-function ProjectGroup({ title, items }: { title: string; items: Project[] }) {
+function ProjectColumn({ title, items }: { title: string; items: Project[] }) {
   if (items.length === 0) return null;
 
   return (
-    <div className="mb-16 last:mb-0">
+    <div>
       <h3 className="font-display text-xl sm:text-2xl font-semibold text-foreground mb-6">
         {title}
       </h3>
-      <div className="grid sm:grid-cols-2 gap-8">
+      <div className="grid gap-8">
         {items.map((project) => (
           <ProjectCard key={project.name} project={project} />
         ))}
@@ -59,9 +59,9 @@ export default function Work() {
           Featured projects
         </h2>
 
-        <div className="max-w-5xl mx-auto">
-          <ProjectGroup title="Personal Projects" items={personalProjects} />
-          <ProjectGroup title="Freelance Work" items={freelanceProjects} />
+        <div className="grid lg:grid-cols-2 gap-x-12 gap-y-16">
+          <ProjectColumn title="Personal Projects" items={personalProjects} />
+          <ProjectColumn title="Freelance Work" items={freelanceProjects} />
         </div>
       </div>
     </section>
